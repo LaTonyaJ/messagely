@@ -151,7 +151,10 @@ class User {
       m.to_username, 
       m.body, 
       m.sent_at, 
-      m.read_at
+      m.read_at,
+      u.first_name,
+      u.last_name,
+      u.phone
       FROM messages AS m 
       JOIN users AS u ON u.username = m.from_username
       WHERE u.username = $1`, 
@@ -161,7 +164,19 @@ class User {
         throw new ExpressError('User not Found', 404);
       }
 
-    return results.rows;
+      return results.rows.map(m => ({
+        id: m.id,
+        to_user: {
+          username: m.to_username,
+          first_name: m.first_name,
+          last_name: m.last_name,
+          phone: m.phone
+        },
+        body: m.body,
+        sent_at: m.sent_at,
+        read_at: m.read_at
+      }));
+
     }catch(e){
       console.log(e);
     }
@@ -182,7 +197,10 @@ class User {
       m.from_username, 
       m.body, 
       m.sent_at, 
-      m.read_at
+      m.read_at,
+      u.first_name,
+      u.last_name,
+      u.phone
       FROM messages AS m 
       JOIN users AS u ON u.username = m.to_username
       WHERE u.username = $1`, 
@@ -192,7 +210,18 @@ class User {
         throw new ExpressError('User not Found', 404);
       }
 
-    return results.rows;
+      return results.rows.map(m => ({
+        id: m.id,
+        from_user: {
+          username: m.from_username,
+          first_name: m.first_name,
+          last_name: m.last_name,
+          phone: m.phone,
+        },
+        body: m.body,
+        sent_at: m.sent_at,
+        read_at: m.read_at
+      }));
     }catch(e){
       console.log(e);
     }
